@@ -13,6 +13,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepo extends JpaRepository<User,Integer> {
 
+    @Query("from #{#entityName} where email = ?1 ")
     User getByEmail(String email);
 
     @Query("select password from User where email= ?1")
@@ -28,4 +29,6 @@ public interface UserRepo extends JpaRepository<User,Integer> {
     @Modifying
     @Query("update from User set loggedIn= false where email= ?1")
     void logOut(String email);
+
+
 }

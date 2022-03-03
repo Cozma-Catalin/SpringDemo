@@ -23,7 +23,6 @@ public class UserController {
     }
 
 
-
     @GetMapping(path = "/getUsers")
     public ResponseEntity<List<User>> getUsers() {
         List<User> users = userService.getAll();
@@ -33,8 +32,8 @@ public class UserController {
     @GetMapping(path = "/getByEmail")
     public ResponseEntity<Object> getByEmail(@RequestParam String email) {
 
-        if(!userService.checkEmail(email)){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(email +" doesn't exist...!");
+        if (!userService.checkEmail(email)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(email + " doesn't exist...!");
         }
         User user = userService.getByEmail(email);
 
@@ -43,25 +42,43 @@ public class UserController {
 
     @PutMapping(path = "/logIn")
     public ResponseEntity<String> login(@RequestParam String email, String password) {
-        if(!userService.checkEmail(email)){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(email +" doesn't exist...!");
+        if (!userService.checkEmail(email)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(email + " doesn't exist...!");
         }
-        if (!userService.checkUser(email, password)) {
+
+        if (!userService.cryptPassword(password).equals(userService.getPassword(email))) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Wrong password...!");
         }
-        userService.logIn(true,email);
+        userService.logIn(true, email);
         return ResponseEntity.ok("LoggedIn successful !");
     }
 
     @PutMapping(path = "/logOut")
-    public ResponseEntity<String> logOut(@RequestParam String email,String password){
-        if(!userService.checkEmail(email)){
+    public ResponseEntity<String> logOut(@RequestParam String email, String password) {
+        if (email == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Insert a valid email...!!");
+        }
+
+        if (email.isBlank() || email.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Insert a valid email...!! Email is blank or empty");
+        }
+
+        if (!userService.checkEmail(email)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(email + " doesn't exist...!");
         }
 
-        if(!userService.checkUser(email,password)){
+        if (password == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Insert a valid password...!! ");
+        }
+
+        if (password.isEmpty() || password.isBlank()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Insert a valid password...!! Password is blank or empty");
+        }
+
+        if (!userService.checkUser(email, password)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Wrong password...!");
         }
+
 
         userService.logOut(email);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Logged out successful !");

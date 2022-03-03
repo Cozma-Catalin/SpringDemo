@@ -5,11 +5,13 @@ import lombok.*;
 
 
 import javax.persistence.*;
-import java.util.Date;
+import java.sql.Date;
+
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Data
 @EqualsAndHashCode
 @ToString
@@ -17,7 +19,7 @@ import java.util.Date;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     @Column(name = "name",nullable = false)
     private String name;
@@ -27,7 +29,7 @@ public class User {
     private Date dateOfBirth;
     @Column(name = "phone_number",nullable = false)
     private String phoneNumber;
-    @Column(name = "email",unique = true,nullable = false)
+    @Column(name = "email",unique = true ,nullable = false)
     private String email;
     @Column(name = "password",nullable = false)
     private String password;
